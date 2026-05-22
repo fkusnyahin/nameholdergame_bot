@@ -8,7 +8,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler
 
 from handlers.start import start
 from handlers.status import status
-from handlers.fight import fight_command, button_callback
+from handlers.fight import fight_command, tier_selected, fight_selected
 from handlers.upgrade import upgrade_ku, upgrade_telo, upgrade_mosch
 from handlers.test import add_pesok, add_glina, add_kamen, add_med
 from handlers.reset import reset
@@ -20,7 +20,8 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("status", status))
     app.add_handler(CommandHandler("fight", fight_command))
-    app.add_handler(CallbackQueryHandler(button_callback))
+    app.add_handler(CallbackQueryHandler(tier_selected, pattern="^tier_"))
+    app.add_handler(CallbackQueryHandler(fight_selected, pattern="^fight_"))
     app.add_handler(CommandHandler("upgrade_ku", upgrade_ku))
     app.add_handler(CommandHandler("upgrade_telo", upgrade_telo))
     app.add_handler(CommandHandler("upgrade_mosch", upgrade_mosch))
