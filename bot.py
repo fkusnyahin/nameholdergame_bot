@@ -4,7 +4,7 @@ import os
 # Добавляем папку проекта в путь (чтобы Python находил наши модули)
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from data.config import TOKEN
+from config import TOKEN
 from core.database import init_db, load_player, save_player
 from core.fight import fight
 from telegram import Update
