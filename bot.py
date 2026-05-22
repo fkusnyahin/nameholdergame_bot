@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from config import TOKEN
 from core.database import init_db, load_player, save_player
 from core.fight import fight
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 # ==================== КОМАНДЫ БОТА ====================
@@ -55,52 +55,25 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def fight_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Команда /fight <тир> <тип>"""
-    args = context.args
-    if len(args) < 2:
-        await update.message.reply_text("❌ Использование: /fight <тир 1-4> <tank/slaby/mag>")
-        return
-    
-    try:
-        tir = int(args[0])
-        mob_type = args[1].lower()
-    except:
-        await update.message.reply_text("❌ Ошибка в параметрах")
-        return
-    
-    if tir < 1 or tir > 4:
-        await update.message.reply_text("❌ Тир должен быть 1, 2, 3 или 4")
-        return
-    if mob_type not in ["tank", "slaby", "mag"]:
-        await update.message.reply_text("❌ Тип: tank, slaby, mag")
-        return
-    
-    user_id = update.effective_user.id
-    data = load_player(user_id)
-    
-    await update.message.reply_text(f"⚔️ Начинается бой с {mob_type} тир {tir}...")
-    
-    # Запускаем симуляцию боя
-    victory, log_text, drop_amount = fight(data, tir, mob_type)
-    
-    if victory:
-        # Добавляем дроп
-        data["chastitsy"][str(tir)] += drop_amount
-        save_player(user_id, data)
-        await update.message.reply_text(
-            f"✅ **ПОБЕДА!**\n\n{log_text}\n\n🎁 Дроп: +{drop_amount} частиц",
-            parse_mode="Markdown"
-        )
-    else:
-        # Потеря 50% частиц при смерти
-        for key in data["chastitsy"]:
-            data["chastitsy"][key] = data["chastitsy"][key] // 2
-        save_player(user_id, data)
-        await update.message.reply_text(
-            f"💀 **ПОРАЖЕНИЕ!**\n\n{log_text}\n\n😵 Вы потеряли 50% частиц!",
-            parse_mode="Markdown"
-        )
-
+    """Команда /fight — показывает кнопки выбора тира и типа моба"""
+    keyboard = [
+        [
+            InlineKeyboardButton("Тир 1 (Песок)", callback_data="fight_1"),
+            InlineKeyboardButton("Тир 2 (Глина)", callback_data="fight_2"),
+            InlineKeyboardButton("Тир 3 (Камень)", callback_data="fight_3"),
+            InlineKeyboardButton("Тир 4 (Медь)", callback_data="fight_4"),
+        ],
+        [
+            InlineKeyboardButton("🗡️ Танк", callback_data="fight_type_tank"),
+            InlineKeyboardButton("🏃 Слабый", callback_data="fight_type_slaby"),
+            InlineKeyboardButton("🔥 Маг", callback_data="fight_type_mag"),
+        ],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text(
+        "Выбери тир и тип моба:",
+        reply_markup=reply_markup
+    )
 
 async def upgrade_ku(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Повышение Корневого узла"""
@@ -233,7 +206,53 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
     conn.close()
     await update.message.reply_text("🔄 Прогресс сброшен! Используйте /start для начала.")
 
-
+async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Обработка нажатий на кнопки выбора боя"""
+    query = update.callback_query
+    await query.answer()
+    
+    data = query.data
+    
+    # Если выбрали тир — сохраняем в контекст
+    if data.startswith("fight_"):
+        tir = data.split("_")[1]
+        if tir.isdigit():
+            context.user_data["fight_tir"] = int(tir)
+            await query.edit_message_text(f"✅ Выбран тир {tir}\nТеперь выбери тип моба")
+            return
+    
+    # Если выбрали тип — запускаем бой
+    if data.startswith("fight_type_"):
+        mob_type = data.split("_")[2]
+        tir = context.user_data.get("fight_tir")
+        
+        if not tir:
+            await query.edit_message_text("❌ Сначала выбери тир моба!")
+            return
+        
+        user_id = update.effective_user.id
+        player_data = load_player(user_id)
+        
+        await query.edit_message_text(f"⚔️ Бой с {mob_type} тир {tir} начался...")
+        
+        victory, log_text, drop = fight(player_data, tir, mob_type)
+        
+        if victory:
+            player_data["chastitsy"][str(tir)] += drop
+            save_player(user_id, player_data)
+            await query.message.reply_text(
+                f"✅ ПОБЕДА!\n\n{log_text}\n\n🎁 Дроп: +{drop} частиц"
+            )
+        else:
+            for key in player_data["chastitsy"]:
+                player_data["chastitsy"][key] //= 2
+            save_player(user_id, player_data)
+            await query.message.reply_text(
+                f"💀 ПОРАЖЕНИЕ!\n\n{log_text}\n\n😵 Потеряно 50% частиц"
+            )
+        
+        # Очищаем сохранённый тир
+        context.user_data["fight_tir"] = None
 # ==================== ЗАПУСК БОТА ====================
 
 def main():
@@ -247,6 +266,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("status", status))
     app.add_handler(CommandHandler("fight", fight_command))
+app.add_handler(CallbackQueryHandler(button_callback))
     app.add_handler(CommandHandler("upgrade_ku", upgrade_ku))
     app.add_handler(CommandHandler("upgrade_telo", upgrade_telo))
     app.add_handler(CommandHandler("upgrade_mosch", upgrade_mosch))
