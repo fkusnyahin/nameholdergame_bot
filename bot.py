@@ -13,6 +13,7 @@ from handlers.upgrade import upgrade_ku, upgrade_telo, upgrade_mosch
 from handlers.test import add_pesok, add_glina, add_kamen, add_med
 from handlers.reset import reset
 from handlers.menu import menu, menu_callback
+from handlers.mobs import mobs
 
 def main():
     init_db()
@@ -33,7 +34,7 @@ def main():
     app.add_handler(CommandHandler("add_kamen", add_kamen))
     app.add_handler(CommandHandler("add_med", add_med))
     app.add_handler(CommandHandler("reset", reset))
-
+    app.add_handler(CommandHandler("mobs", mobs))
     print("🚀 Бот запущен!")
     app.run_polling()
 
