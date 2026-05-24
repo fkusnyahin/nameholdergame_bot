@@ -1,9 +1,6 @@
-import os
-import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-# ЗАМЕНИ НА СВОЁ ИМЯ ФАЙЛА
 CRED_FILE = "mob-bot-mobdatabase-ad563d57da55.json"
 
 def get_mobs_from_sheets():
