@@ -103,3 +103,4 @@ async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     from handlers.menu import menu
     await menu(update, context)
+
