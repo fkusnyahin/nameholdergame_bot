@@ -31,7 +31,9 @@ async def dary_command(message, context):
     for tier in range(1, 5):
         current = dary.get(str(tier), 0)
         if current < ku:
-            keyboard.append([InlineKeyboardButton(f"Upgrade Tier {tier}", callback_data=f"dary_upgrade_{tier}")])
+            cb = f"dary_upgrade_{tier}"
+            await message.reply_text(f"DEBUG: creating button for tier {tier} with callback_data={cb}")
+            keyboard.append([InlineKeyboardButton(f"Upgrade Tier {tier}", callback_data=cb)])
     
     keyboard.append([InlineKeyboardButton("Back to menu", callback_data="main_menu_back")])
     
