@@ -56,6 +56,7 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     player_data = load_player(user_id)
     await query.edit_message_text(f"Fight with {mob_type} tier {tir} started...")
     victory, log_text, drop = fight(player_data, tir, mob_type)
+    
     if victory:
         player_data["chastitsy"][str(tir)] += drop
         save_player(user_id, player_data)
@@ -65,10 +66,23 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             player_data["chastitsy"][key] //= 2
         save_player(user_id, player_data)
         await query.message.reply_text(f"LOSE!\n\n{log_text}\n\nLost 50% particles")
+    
     context.user_data.pop("fight_tir", None)
     context.user_data.pop("fight_mob_type", None)
+    
+    # Показать меню после боя
+    keyboard = [
+        [InlineKeyboardButton("Fight again", callback_data="menu_fight")],
+        [InlineKeyboardButton("Back to menu", callback_data="main_menu_after_fight")]
+    ]
+    await query.message.reply_text("What now?", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    await menu(query.message, context)
+
+async def main_menu_after_fight(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     await menu(query.message, context)

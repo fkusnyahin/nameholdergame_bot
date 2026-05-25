@@ -1,4 +1,4 @@
-п»їimport os
+import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -8,7 +8,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler
 
 from handlers.start import start
 from handlers.status import status
-from handlers.fight import fight_command, tier_selected, type_selected, fight_start, main_menu_back
+from handlers.fight import fight_command, tier_selected, type_selected, fight_start, main_menu_back, main_menu_after_fight
 from handlers.upgrade import (
     upgrade_ku, upgrade_telo, upgrade_mosch, upgrade_golova, upgrade_duh,
     upgrade_lovkost, upgrade_krov, upgrade_um, upgrade_glaza, upgrade_volya,
@@ -26,7 +26,7 @@ def main():
     app.add_handler(CommandHandler("menu", menu))
     app.add_handler(CommandHandler("status", status))
 
-    # РљРѕРјР°РЅРґС‹ РїСЂРѕРєР°С‡РєРё
+    # Команды прокачки
     app.add_handler(CommandHandler("upgrade_ku", upgrade_ku))
     app.add_handler(CommandHandler("upgrade_telo", upgrade_telo))
     app.add_handler(CommandHandler("upgrade_mosch", upgrade_mosch))
@@ -41,21 +41,21 @@ def main():
     app.add_handler(CommandHandler("upgrade_chuvstva", upgrade_chuvstva))
     app.add_handler(CommandHandler("upgrade_energiya", upgrade_energiya))
 
-    # РўРµСЃС‚РѕРІС‹Рµ РєРѕРјР°РЅРґС‹
+    # Тестовые команды
     app.add_handler(CommandHandler("add_pesok", add_pesok))
     app.add_handler(CommandHandler("add_glina", add_glina))
     app.add_handler(CommandHandler("add_kamen", add_kamen))
     app.add_handler(CommandHandler("add_med", add_med))
     app.add_handler(CommandHandler("reset", reset))
 
-    # РћР±СЂР°Р±РѕС‚С‡РёРєРё РєРЅРѕРїРѕРє
+    # Обработчики кнопок
     app.add_handler(CallbackQueryHandler(tier_selected, pattern="^tier_"))
     app.add_handler(CallbackQueryHandler(type_selected, pattern="^select_"))
     app.add_handler(CallbackQueryHandler(fight_start, pattern="^fight_start_"))
-    app.add_handler(CallbackQueryHandler(main_menu_back, pattern="^main_menu_back$"))
+    app.add_handler(CallbackQueryHandler(main_menu_back, main_menu_after_fight, pattern="^main_menu_back, main_menu_after_fight$"))
     app.add_handler(CallbackQueryHandler(menu_callback, pattern="^(menu_|upgrade_|exchange_)"))
 
-    print("рџљЂ Р‘РѕС‚ Р·Р°РїСѓС‰РµРЅ!")
+    print("?? Бот запущен!")
     app.run_polling()
 
 if __name__ == "__main__":
