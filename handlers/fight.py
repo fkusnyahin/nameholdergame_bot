@@ -1,7 +1,8 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
-from core.fight import fight`nfrom handlers.menu import menu
+from core.fight import fight
+from handlers.menu import menu
 
 async def fight_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
