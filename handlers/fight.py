@@ -86,13 +86,11 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.pop("fight_mob_type", None)
 
 async def back_to_tiers(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Возврат к выбору тира"""
     query = update.callback_query
     await query.answer()
     await fight_command(update, context)
 
 async def back_to_types(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Возврат к выбору типа моба"""
     query = update.callback_query
     await query.answer()
     parts = query.data.split("_")
@@ -101,7 +99,6 @@ async def back_to_types(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await tier_selected(update, context)
 
 async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Возврат в главное меню через бой"""
     query = update.callback_query
     await query.answer()
     from handlers.menu import menu
