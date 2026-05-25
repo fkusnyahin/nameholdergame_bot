@@ -3,14 +3,14 @@ from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.formulas import get_player_stats
 
-async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def menu(message, context):
     keyboard = [
         [InlineKeyboardButton("Fight", callback_data="menu_fight")],
         [InlineKeyboardButton("Character", callback_data="menu_character")],
         [InlineKeyboardButton("Particles", callback_data="menu_particles")],
         [InlineKeyboardButton("Help", callback_data="menu_help")],
     ]
-    await update.message.reply_text("Main menu:", reply_markup=InlineKeyboardMarkup(keyboard))
+    await message.reply_text("Main menu:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
