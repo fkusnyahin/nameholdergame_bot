@@ -31,6 +31,16 @@ def load_player(user_id: int) -> dict:
             "ku": 1,
             "telo": 1,
             "mosch": 1,
+            "golova": 1,
+            "duh": 1,
+            "lovkost": 1,
+            "krov": 1,
+            "um": 1,
+            "glaza": 1,
+            "volya": 1,
+            "zhizn": 1,
+            "chuvstva": 1,
+            "energiya": 1,
             "chastitsy": {"1": 0, "2": 0, "3": 0, "4": 0},
             "rules": [{"action": "attack", "condition": "always", "priority": 1}]
         }
