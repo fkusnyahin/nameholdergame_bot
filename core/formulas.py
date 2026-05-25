@@ -1,7 +1,6 @@
-import random
+﻿import random
 
 def get_player_stats(data: dict) -> dict:
-    """Рассчитывает урон и здоровье с учётом всех узлов"""
     ku = data["ku"]
     telo = data["telo"]
     mosch = data["mosch"]
@@ -16,66 +15,36 @@ def get_player_stats(data: dict) -> dict:
     chuvstva = data["chuvstva"]
     energiya = data["energiya"]
 
-    # Бонусы от Мощи (физический урон)
     mosch_fix = 2 * mosch
     mosch_percent = 0.05 * mosch
-
-    # Бонусы от Ума (магический урон)
     um_fix = 2 * um
     um_percent = 0.05 * um
-
-    # Бонусы от Головы (магический урон + кулдауны)
     golova_magic_fix = 2 * golova
     golova_magic_percent = 0.05 * golova
-    golova_cd_reduction = 0.05 * golova   # -5% к кулдаунам за тир
-
-    # Бонусы от Духа (лечение + мана)
+    golova_cd_reduction = 0.05 * golova
     duh_heal_percent = 0.10 * duh
     duh_mana_percent = 0.10 * duh
-
-    # Бонусы от Тела (здоровье)
     telo_fix = 20 * (telo - 1)
     telo_percent = 0.10 * (telo - 1)
-
-    # Бонусы от Крови (лечение + сопротивление ядам)
     krov_heal_fix = 5 * krov
     krov_resist_percent = 0.05 * krov
-
-    # Бонусы от Жизни (здоровье + лечение)
     zhizn_hp_fix = 10 * zhizn
     zhizn_heal_percent = 0.05 * zhizn
-
-    # Бонусы от Ловкости (уклонение + скорость атаки)
     lovkost_dodge = 0.05 * lovkost
     lovkost_attack_speed = 1 + (0.05 * lovkost)
-
-    # Бонусы от Глаз (точность + дальность)
     glaza_accuracy_fix = 1 * glaza
     glaza_range_percent = 0.05 * glaza
-
-    # Бонусы от Воли (длительность баффов + сопротивление ментальным дебаффам)
     volya_duration_fix = 1 * volya
     volya_resist_percent = 0.05 * volya
-
-    # Бонусы от Чувств (радиус обнаружения)
     chuvstva_radius_fix = 1 * chuvstva
     chuvstva_detect_percent = 0.05 * chuvstva
-
-    # Бонусы от Энергии (мана + регенерация)
     energiya_mana_fix = 5 * energiya
     energiya_regen_percent = 0.05 * energiya
-
-    # Бонусы от КУ
     ku_fix = ku
     ku_percent = 0.02 * ku
 
-    # Итоговый физический урон (база 10)
     physical_damage = (10 + mosch_fix + ku_fix) * (1 + mosch_percent + ku_percent)
-
-    # Итоговый магический урон (база 10, заменим позже отдельной формулой)
     magic_damage = (10 + um_fix + golova_magic_fix + ku_fix) * (1 + um_percent + golova_magic_percent + ku_percent)
-
-    # Итоговое здоровье (база 100)
     hp = (100 + telo_fix + zhizn_hp_fix) * (1 + telo_percent + ku_percent)
 
     return {
@@ -92,7 +61,6 @@ def get_player_stats(data: dict) -> dict:
     }
 
 def get_mob_stats(tir: int, mob_type: str) -> dict:
-    """Характеристики мобов"""
     if mob_type == "tank":
         return {
             "name": f"Tank {tir}",
@@ -126,10 +94,42 @@ def get_mob_stats(tir: int, mob_type: str) -> dict:
             "dot_per_sec": 10 * tir,
             "dot_duration": tir
         }
+    elif mob_type == "slime":
+        return {
+            "name": f"Slime {tir}",
+            "hp": 40 * tir,
+            "damage": 4 * tir,
+            "armor": 10 * tir,
+            "armor_type": "percent",
+            "initiative": 0.9,
+            "dot_per_sec": 0,
+            "dot_duration": 0
+        }
+    elif mob_type == "zombie":
+        return {
+            "name": f"Zombie {tir}",
+            "hp": 60 * tir,
+            "damage": 6 * tir,
+            "armor": 5 * tir,
+            "armor_type": "flat",
+            "initiative": 0.6,
+            "dot_per_sec": 0,
+            "dot_duration": 0
+        }
+    elif mob_type == "skeleton":
+        return {
+            "name": f"Skeleton {tir}",
+            "hp": 35 * tir,
+            "damage": 9 * tir,
+            "armor": 3 * tir,
+            "armor_type": "flat",
+            "initiative": 1.2,
+            "dot_per_sec": 0,
+            "dot_duration": 0
+        }
     return None
 
 def damage_after_armor(damage: int, mob: dict) -> int:
-    """Урон после брони моба"""
     if mob["armor_type"] == "percent":
         return max(1, int(damage / (1 + mob["armor"] / 100)))
     else:
