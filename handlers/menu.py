@@ -1,4 +1,4 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+﻿from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.formulas import get_player_stats
@@ -10,7 +10,7 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("Particles", callback_data="menu_particles")],
         [InlineKeyboardButton("Help", callback_data="menu_help")],
     ]
-    await reply_to.reply_text if hasattr(reply_to, "reply_text") else await update.message.reply_text("Main menu:", reply_markup=InlineKeyboardMarkup(keyboard))
+    await update.message.reply_text("Main menu:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -106,4 +106,3 @@ async def exchange_particles(query, context):
         await query.message.reply_text("Not enough particles (need 20 of one tier)")
     save_player(user_id, data)
     await show_particles(query, context)
-
