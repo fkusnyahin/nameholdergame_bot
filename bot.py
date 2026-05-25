@@ -14,7 +14,7 @@ from handlers.upgrade import (
     upgrade_lovkost, upgrade_krov, upgrade_um, upgrade_glaza, upgrade_volya,
     upgrade_zhizn, upgrade_chuvstva, upgrade_energiya
 )
-from handlers.dary import dary_command, upgrade_dary_1, upgrade_dary_2, upgrade_dary_3, upgrade_dary_4
+from handlers.dary import dary_command, upgrade_dary_1, upgrade_dary_2, upgrade_dary_3, upgrade_dary_4, dary_upgrade_menu, dary_do_upgrade, dary_upgrade_menu, dary_do_upgrade
 from handlers.test import add_pesok, add_glina, add_kamen, add_med
 from handlers.reset import reset
 from handlers.main_menu import main_menu, main_menu_callback
@@ -65,6 +65,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 
 
