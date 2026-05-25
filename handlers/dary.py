@@ -48,7 +48,8 @@ async def dary_upgrade_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     cost_tier = tier + 1
     cost = 10
-    cost_name = ["", "Sand", "Clay", "Stone", "Copper", "Bronze", "Steel", "Titan", "Wolfram", "Star"][cost_tier]
+    cost_names = ["", "Sand", "Clay", "Stone", "Copper", "Bronze", "Steel", "Titan", "Wolfram", "Star"]
+    cost_name = cost_names[cost_tier] if cost_tier < len(cost_names) else "?"
     
     text = f"*Upgrade Tier {tier} Gifts*\n\n"
     text += f"Current level: {current_level}\n"
@@ -96,11 +97,10 @@ async def dary_do_upgrade(update: Update, context: ContextTypes.DEFAULT_TYPE):
         data["dary"][str(tier)] = current_level + 1
         save_player(user_id, data)
         await query.message.reply_text(f"✅ Tier {tier} Gifts upgraded to level {current_level + 1}!")
+        # Показать обновлённое меню Даров
+        await dary_command(query.message, context)
     else:
         await query.message.reply_text(f"❌ Need {cost} particles of tier {cost_tier}")
-    
-    # Показать обновлённое меню Даров
-    await dary_command(query.message, context)
 
 async def upgrade_dary_1(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await dary_upgrade_menu(update, context)
