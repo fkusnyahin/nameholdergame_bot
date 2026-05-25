@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -8,7 +8,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler
 
 from handlers.start import start
 from handlers.status import status
-from handlers.fight import fight_command, tier_selected, type_selected, fight_start, main_menu_back, main_menu_after_fight
+from handlers.fight import fight_command, tier_selected, type_selected, fight_start, main_menu_back
 from handlers.upgrade import (
     upgrade_ku, upgrade_telo, upgrade_mosch, upgrade_golova, upgrade_duh,
     upgrade_lovkost, upgrade_krov, upgrade_um, upgrade_glaza, upgrade_volya,
@@ -65,3 +65,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
