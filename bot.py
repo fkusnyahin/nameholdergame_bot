@@ -28,6 +28,7 @@ def main():
     app.add_handler(CallbackQueryHandler(fight_start, pattern="^fight_start_"))
     app.add_handler(CallbackQueryHandler(fight_back, pattern="^fight_back$"))
     app.add_handler(CallbackQueryHandler(back_to_types, pattern="^back_to_types_"))
+    app.add_handler(CallbackQueryHandler(menu_callback, pattern="^(menu_|upgrade_|exchange_)"))
     app.add_handler(CommandHandler("upgrade_ku", upgrade_ku))
     app.add_handler(CommandHandler("upgrade_telo", upgrade_telo))
     app.add_handler(CommandHandler("upgrade_mosch", upgrade_mosch))
