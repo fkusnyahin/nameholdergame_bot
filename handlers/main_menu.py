@@ -31,7 +31,7 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await dary_command(query.message, context)
     elif data == "main_menu_back":
         await show_main_menu(query)
-    elif data.startswith("upgrade_"):
+    elif data.startswith("dary_"):\n        from handlers.dary import dary_upgrade_menu, dary_do_upgrade\n        if data.startswith("dary_upgrade_"):\n            await dary_upgrade_menu(update, context)\n        elif data.startswith("dary_do_upgrade_"):\n            await dary_do_upgrade(update, context)\n    elif data.startswith("upgrade_"):
         await handle_upgrade(query, context)
     elif data == "exchange_20_1":
         await exchange_particles(query, context)
@@ -150,4 +150,5 @@ async def exchange_particles(query, context):
         await query.message.reply_text("Not enough particles (need 20 of one tier)")
     save_player(user_id, data)
     await show_particles(query, context)
+
 
