@@ -3,7 +3,7 @@ from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.fight import fight
 
-async def fight_command(update, context, from_callback=False):
+async def fight_command(update, context):
     keyboard = [
         [
             InlineKeyboardButton("Tier 1 (Sand)", callback_data="tier_1"),
@@ -13,12 +13,10 @@ async def fight_command(update, context, from_callback=False):
         ],
         [InlineKeyboardButton("Back to menu", callback_data="main_menu_back")]
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    if from_callback and hasattr(update, 'callback_query'):
-        await update.callback_query.message.reply_text("Choose mob tier:", reply_markup=reply_markup)
+    if hasattr(update, 'callback_query'):
+        await update.callback_query.message.reply_text("Choose mob tier:", reply_markup=InlineKeyboardMarkup(keyboard))
     else:
-        await update.message.reply_text("Choose mob tier:", reply_markup=reply_markup)
+        await update.message.reply_text("Choose mob tier:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def tier_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -31,7 +29,7 @@ async def tier_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
             InlineKeyboardButton("Weak", callback_data=f"select_slaby_{tir}"),
             InlineKeyboardButton("Mage", callback_data=f"select_mag_{tir}"),
         ],
-        [InlineKeyboardButton("Back to tiers", callback_data="back_to_tiers")]
+        [InlineKeyboardButton("Back to menu", callback_data="main_menu_back")]
     ]
     await query.edit_message_text(f"Tier {tir} selected. Choose mob type:", reply_markup=InlineKeyboardMarkup(keyboard))
 
@@ -46,7 +44,7 @@ async def type_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mob_name = mob_names.get(mob_type, mob_type)
     keyboard = [
         [InlineKeyboardButton("Start fight", callback_data=f"fight_start_{tir}_{mob_type}")],
-        [InlineKeyboardButton("Back to types", callback_data=f"back_to_types_{tir}")]
+        [InlineKeyboardButton("Back to menu", callback_data="main_menu_back")]
     ]
     await query.edit_message_text(f"Enemy: Tier {tir} {mob_name}\nPress Start fight", reply_markup=InlineKeyboardMarkup(keyboard))
 
@@ -71,19 +69,6 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text(f"LOSE!\n\n{log_text}\n\nLost 50% particles")
     context.user_data.pop("fight_tir", None)
     context.user_data.pop("fight_mob_type", None)
-
-async def back_to_tiers(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    await fight_command(update, context, from_callback=True)
-
-async def back_to_types(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    parts = query.data.split("_")
-    tir = int(parts[3])
-    context.user_data["fight_tir"] = tir
-    await tier_selected(update, context)
 
 async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
