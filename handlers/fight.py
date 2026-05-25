@@ -1,9 +1,9 @@
-﻿import random
+import random
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.fight import fight
-from handlers.menu import menu
+from handlers.main_menu import main_menu
 
 async def fight_command(message, context):
     keyboard = [
@@ -84,4 +84,5 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    await menu(query.message, context)
+    await main_menu(query.message, context)
+

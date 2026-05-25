@@ -17,14 +17,14 @@ from handlers.upgrade import (
 from handlers.dary import dary_command, upgrade_dary_1, upgrade_dary_2, upgrade_dary_3, upgrade_dary_4
 from handlers.test import add_pesok, add_glina, add_kamen, add_med
 from handlers.reset import reset
-from handlers.menu import menu, menu_callback
+from handlers.main_menu import main_menu, main_menu_callback
 
 def main():
     init_db()
     app = Application.builder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("menu", menu))
+    app.add_handler(CommandHandler("menu", main_menu))
     app.add_handler(CommandHandler("status", status))
     app.add_handler(CommandHandler("dary", dary_command))
 
@@ -58,12 +58,13 @@ def main():
     app.add_handler(CallbackQueryHandler(fight_start, pattern="^fight_start_"))
     app.add_handler(CallbackQueryHandler(main_menu_back, pattern="^main_menu_back$"))
     app.add_handler(CallbackQueryHandler(main_menu_back, pattern="^main_menu_back$"))
-    app.add_handler(CallbackQueryHandler(menu_callback, pattern="^(menu_|upgrade_|exchange_)"))
+    app.add_handler(CallbackQueryHandler(main_menu_callback, pattern="^(main_menu_|upgrade_|exchange_)"))
 
     print("Bot started!")
     app.run_polling()
 
 if __name__ == "__main__":
     main()
+
 
 
