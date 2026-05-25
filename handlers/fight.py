@@ -1,4 +1,4 @@
-п»їfrom telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.fight import fight
@@ -48,12 +48,12 @@ async def type_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.edit_message_text(f"Enemy: Tier {tir} {mob_name}\nPress Start fight", reply_markup=InlineKeyboardMarkup(keyboard))
 
 def calculate_drop(tir: int, dary_level: int) -> int:
-    """Р Р°СЃС‡С‘С‚ РґСЂРѕРїР° РїРѕ С‚Р°Р±Р»РёС†Рµ Р”Р°СЂРѕРІ (РіР»Р°РІР° 4)"""
-    # РЈСЂРѕРІРµРЅСЊ Р”Р°СЂРѕРІ 1 в†’ РґРёР°РїР°Р·РѕРЅ 1-1 (СЃСЂРµРґРЅРёР№ 1)
-    # РЈСЂРѕРІРµРЅСЊ 2 в†’ 1-2 (СЃСЂРµРґРЅРёР№ 1.5)
-    # РЈСЂРѕРІРµРЅСЊ 3 в†’ 1-3 (СЃСЂРµРґРЅРёР№ 2)
-    # РЈСЂРѕРІРµРЅСЊ 4 в†’ 1-5 (СЃСЂРµРґРЅРёР№ 3)
-    # РЈСЂРѕРІРµРЅСЊ 5 в†’ 1-8 (СЃСЂРµРґРЅРёР№ 4.5)
+    """Расчёт дропа по таблице Даров (глава 4)"""
+    # Уровень Даров 1 > диапазон 1-1 (средний 1)
+    # Уровень 2 > 1-2 (средний 1.5)
+    # Уровень 3 > 1-3 (средний 2)
+    # Уровень 4 > 1-5 (средний 3)
+    # Уровень 5 > 1-8 (средний 4.5)
     max_drop = {
         1: 1, 2: 2, 3: 3, 4: 5, 5: 8, 6: 13, 7: 21, 8: 34, 9: 55, 10: 89
     }.get(dary_level, 1)
@@ -68,12 +68,12 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     player_data = load_player(user_id)
     
-    # Р‘РѕР№
+    # Бой
     await query.edit_message_text(f"Fight with {mob_type} tier {tir} started...")
     victory, log_text, _ = fight(player_data, tir, mob_type)
     
     if victory:
-        # Р Р°СЃС‡С‘С‚ РґСЂРѕРїР° СЃ СѓС‡С‘С‚РѕРј Р”Р°СЂРѕРІ
+        # Расчёт дропа с учётом Даров
         dary_level = player_data.get("dary", {}).get(str(tir), 1)
         drop_amount = calculate_drop(tir, dary_level)
         player_data["chastitsy"][str(tir)] += drop_amount
@@ -103,3 +103,4 @@ async def main_menu_after_fight(update: Update, context: ContextTypes.DEFAULT_TY
     query = update.callback_query
     await query.answer()
     await menu(query.message, context)
+
