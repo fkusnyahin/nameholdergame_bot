@@ -1,9 +1,21 @@
 ﻿import random
+import json
+import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.fight import fight
 from handlers.main_menu import main_menu
+
+def load_mob_info():
+    path = os.path.join(os.path.dirname(__file__), '..', 'mobs_info.json')
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except:
+        return {}
+
+MOB_INFO = load_mob_info()
 
 async def fight_command(message, context):
     keyboard = [
@@ -46,13 +58,13 @@ async def type_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mob_type = parts[1]
     tir = int(parts[2])
     context.user_data["fight_mob_type"] = mob_type
-    mob_names = {"tank": "Tank", "slaby": "Weak", "mag": "Mage"}
-    mob_name = mob_names.get(mob_type, mob_type)
+    # Читаем имя из JSON
+    mob_name = MOB_INFO.get(mob_type, {}).get("name", mob_type.capitalize())
     keyboard = [
         [InlineKeyboardButton("Start fight", callback_data=f"fight_start_{tir}_{mob_type}")],
         [InlineKeyboardButton("Back to menu", callback_data="main_menu_back")]
     ]
-    await query.edit_message_text(f"Enemy: Tier {tir} {mob_name}\nPress Start fight", reply_markup=InlineKeyboardMarkup(keyboard))
+    await query.edit_message_text(f"Enemy: {mob_name} (Tier {tir})\nPress Start fight", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
