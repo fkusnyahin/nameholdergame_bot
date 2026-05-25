@@ -6,4 +6,4 @@ from handlers.menu import menu
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     load_player(user_id)
-    await menu(update, context)
+    await menu(update.message, context)

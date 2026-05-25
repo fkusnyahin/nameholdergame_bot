@@ -5,7 +5,7 @@ from core.database import load_player, save_player
 from core.fight import fight
 from handlers.menu import menu
 
-async def fight_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def fight_command(message, context):
     keyboard = [
         [
             InlineKeyboardButton("Tier 1 (Sand)", callback_data="tier_1"),
@@ -15,7 +15,7 @@ async def fight_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ],
         [InlineKeyboardButton("Back to menu", callback_data="main_menu_back")]
     ]
-    await update.message.reply_text("Choose mob tier:", reply_markup=InlineKeyboardMarkup(keyboard))
+    await message.reply_text("Choose mob tier:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def tier_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -84,4 +84,4 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    await menu(update, context)
+    await menu(query.message, context)
