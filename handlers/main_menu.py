@@ -27,7 +27,7 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
     elif data == "main_menu_help":
         await show_help(query)
     elif data == "main_menu_gifts":
-        print("DEBUG: calling dary_command")
+        await query.message.reply_text("DEBUG: dary_command called")
         from handlers.dary import dary_command
         await dary_command(query.message, context)
     elif data.startswith("dary_upgrade_"):
