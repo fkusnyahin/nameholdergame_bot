@@ -5,8 +5,6 @@ from core.database import load_player, save_player
 DROP_MAX = {1: 1, 2: 2, 3: 3, 4: 5, 5: 8, 6: 13, 7: 21, 8: 34, 9: 55, 10: 89}
 
 async def dary_command(message, context):
-    await message.reply_text("DEBUG: inside dary_command")
-    
     user_id = message.chat.id
     data = load_player(user_id)
     dary = data.get("dary", {"1": 1, "2": 0, "3": 0, "4": 0})
@@ -31,9 +29,7 @@ async def dary_command(message, context):
     for tier in range(1, 5):
         current = dary.get(str(tier), 0)
         if current < ku:
-            cb = f"dary_upgrade_{tier}"
-            await message.reply_text(f"DEBUG: creating button for tier {tier} with callback_data={cb}")
-            keyboard.append([InlineKeyboardButton(f"Upgrade Tier {tier}", callback_data=cb)])
+            keyboard.append([InlineKeyboardButton(f"Upgrade Tier {tier}", callback_data=f"dary_upgrade_{tier}")])
     
     keyboard.append([InlineKeyboardButton("Back to menu", callback_data="main_menu_back")])
     
