@@ -22,7 +22,6 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("menu", menu))
     app.add_handler(CommandHandler("status", status))
-    app.add_handler(CommandHandler("fight", fight_command))
     app.add_handler(CallbackQueryHandler(tier_selected, pattern="^tier_"))
     app.add_handler(CallbackQueryHandler(type_selected, pattern="^select_"))
     app.add_handler(CallbackQueryHandler(fight_start, pattern="^fight_start_"))
