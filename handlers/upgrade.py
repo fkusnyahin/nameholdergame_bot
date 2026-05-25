@@ -3,19 +3,19 @@ from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 
 # Общая функция для прокачки любого узла
-async def upgrade_node(update: Update, context: ContextTypes.DEFAULT_TYPE, node_name: str, max_tier: int = 4):
+async def upgrade_node(update: Update, context: ContextTypes.DEFAULT_TYPE, node_name: str, max_tier: int = 9):
     user_id = update.effective_user.id
     data = load_player(user_id)
     current = data[node_name]
     if current >= max_tier:
-        await update.message.reply_text(f"{node_name} already at max tier")
+        await update.message.reply_text(f"{node_name} already at max tier (Star)")
         return
     if node_name in ["telo", "mosch", "golova", "duh"]:
         if current >= data["ku"] + 1:
             await update.message.reply_text(f"{node_name} cannot be higher than KU+1 (KU={data['ku']})")
             return
     next_tier = current + 1
-    # Стоимость: для У1 — 10×тир, для У2 — 5×тир
+    # Стоимость: для У1 — 10×N, для У2 — 5×N
     if node_name in ["telo", "mosch", "golova", "duh"]:
         cost = 10 * next_tier
     else:
@@ -33,10 +33,10 @@ async def upgrade_ku(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     data = load_player(user_id)
     current = data["ku"]
-    if current >= 4:
-        await update.message.reply_text("Core node already at max tier (Copper)")
+    if current >= 9:
+        await update.message.reply_text("Core node already at max tier (Star)")
         return
-    cost_map = {1: 10, 2: 20, 3: 40}
+    cost_map = {1: 10, 2: 20, 3: 40, 4: 80, 5: 160, 6: 320, 7: 640, 8: 1280}
     cost = cost_map[current]
     cost_tier = current + 1
     if data["chastitsy"][str(cost_tier)] >= cost:
