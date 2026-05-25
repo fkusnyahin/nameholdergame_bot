@@ -11,7 +11,8 @@ async def fight_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             InlineKeyboardButton("Тир 2 (Глина)", callback_data="tier_2"),
             InlineKeyboardButton("Тир 3 (Камень)", callback_data="tier_3"),
             InlineKeyboardButton("Тир 4 (Медь)", callback_data="tier_4"),
-        ]
+        ],
+        [InlineKeyboardButton("⬅️ Назад в меню", callback_data="menu_back")]
     ]
     await update.message.reply_text("Выбери тир моба:", reply_markup=InlineKeyboardMarkup(keyboard))
 
@@ -23,23 +24,50 @@ async def tier_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tir = int(query.data.split("_")[1])
     context.user_data["fight_tir"] = tir
     
+    tier_names = {1: "Песок", 2: "Глина", 3: "Камень", 4: "Медь"}
+    tier_name = tier_names.get(tir, str(tir))
+    
     keyboard = [
         [
-            InlineKeyboardButton("🗡️ Танк", callback_data=f"fight_tank_{tir}"),
-            InlineKeyboardButton("🏃 Слабый", callback_data=f"fight_slaby_{tir}"),
-            InlineKeyboardButton("🔥 Маг", callback_data=f"fight_mag_{tir}"),
-        ]
+            InlineKeyboardButton("🗡️ Танк", callback_data=f"select_tank_{tir}"),
+            InlineKeyboardButton("🏃 Слабый", callback_data=f"select_slaby_{tir}"),
+            InlineKeyboardButton("🔥 Маг", callback_data=f"select_mag_{tir}"),
+        ],
+        [InlineKeyboardButton("⬅️ Назад к выбору тира", callback_data="fight_back")]
     ]
-    await query.edit_message_text(f"Тир {tir} выбран. Теперь выбери тип моба:", reply_markup=InlineKeyboardMarkup(keyboard))
+    await query.edit_message_text(f"Тир {tir} ({tier_name}) выбран. Теперь выбери тип моба:", reply_markup=InlineKeyboardMarkup(keyboard))
 
-async def fight_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Шаг 3: выбран тип моба, запускаем бой"""
+async def type_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Шаг 3: выбран тип моба, показываем подтверждение"""
     query = update.callback_query
     await query.answer()
     
     parts = query.data.split("_")
     mob_type = parts[1]
     tir = int(parts[2])
+    
+    context.user_data["fight_mob_type"] = mob_type
+    
+    tier_names = {1: "Песок", 2: "Глина", 3: "Камень", 4: "Медь"}
+    tier_name = tier_names.get(tir, str(tir))
+    
+    mob_names = {"tank": "Танк", "slaby": "Слабый", "mag": "Маг"}
+    mob_name = mob_names.get(mob_type, mob_type)
+    
+    keyboard = [
+        [InlineKeyboardButton("✅ Начать бой", callback_data=f"fight_start_{tir}_{mob_type}")],
+        [InlineKeyboardButton("⬅️ Назад к типам", callback_data=f"back_to_types_{tir}")]
+    ]
+    await query.edit_message_text(f"⚔️ **Противник: {tier_name} {mob_name}**\n\nНажми «Начать бой» для сражения.", parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(keyboard))
+
+async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Шаг 4: запуск боя"""
+    query = update.callback_query
+    await query.answer()
+    
+    parts = query.data.split("_")
+    tir = int(parts[2])
+    mob_type = parts[3]
     
     user_id = update.effective_user.id
     player_data = load_player(user_id)
@@ -59,3 +87,19 @@ async def fight_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text(f"💀 ПОРАЖЕНИЕ!\n\n{log_text}\n\n😵 Потеряно 50% частиц")
     
     context.user_data.pop("fight_tir", None)
+    context.user_data.pop("fight_mob_type", None)
+
+async def fight_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Возврат к выбору тира"""
+    query = update.callback_query
+    await query.answer()
+    await fight_command(update, context)
+
+async def back_to_types(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Возврат к выбору типа моба"""
+    query = update.callback_query
+    await query.answer()
+    parts = query.data.split("_")
+    tir = int(parts[3])
+    context.user_data["fight_tir"] = tir
+    await tier_selected(update, context)
