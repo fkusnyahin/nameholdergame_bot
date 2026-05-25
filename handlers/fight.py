@@ -3,9 +3,8 @@ from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.fight import fight
 from handlers.menu import menu
-import random
 
-async def fight_command(message, context):
+async def fight_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [
             InlineKeyboardButton("Tier 1 (Sand)", callback_data="tier_1"),
@@ -15,7 +14,7 @@ async def fight_command(message, context):
         ],
         [InlineKeyboardButton("Back to menu", callback_data="main_menu_back")]
     ]
-    await message.reply_text("Choose mob tier:", reply_markup=InlineKeyboardMarkup(keyboard))
+    await update.message.reply_text("Choose mob tier:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def tier_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -47,18 +46,6 @@ async def type_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
     await query.edit_message_text(f"Enemy: Tier {tir} {mob_name}\nPress Start fight", reply_markup=InlineKeyboardMarkup(keyboard))
 
-def calculate_drop(tir: int, dary_level: int) -> int:
-    """Расчёт дропа по таблице Даров (глава 4)"""
-    # Уровень Даров 1 > диапазон 1-1 (средний 1)
-    # Уровень 2 > 1-2 (средний 1.5)
-    # Уровень 3 > 1-3 (средний 2)
-    # Уровень 4 > 1-5 (средний 3)
-    # Уровень 5 > 1-8 (средний 4.5)
-    max_drop = {
-        1: 1, 2: 2, 3: 3, 4: 5, 5: 8, 6: 13, 7: 21, 8: 34, 9: 55, 10: 89
-    }.get(dary_level, 1)
-    return random.randint(1, max_drop)
-
 async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -67,40 +54,22 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mob_type = parts[3]
     user_id = update.effective_user.id
     player_data = load_player(user_id)
-    
-    # Бой
     await query.edit_message_text(f"Fight with {mob_type} tier {tir} started...")
-    victory, log_text, _ = fight(player_data, tir, mob_type)
-    
+    victory, log_text, drop = fight(player_data, tir, mob_type)
     if victory:
-        # Расчёт дропа с учётом Даров
-        dary_level = player_data.get("dary", {}).get(str(tir), 1)
-        drop_amount = calculate_drop(tir, dary_level)
-        player_data["chastitsy"][str(tir)] += drop_amount
+        player_data["chastitsy"][str(tir)] += drop
         save_player(user_id, player_data)
-        await query.message.reply_text(f"WIN!\n\n{log_text}\n\nDrop: +{drop_amount} particles")
+        await query.message.reply_text(f"WIN!\n\n{log_text}\n\nDrop: +{drop} particles")
     else:
         for key in player_data["chastitsy"]:
             player_data["chastitsy"][key] //= 2
         save_player(user_id, player_data)
         await query.message.reply_text(f"LOSE!\n\n{log_text}\n\nLost 50% particles")
-    
     context.user_data.pop("fight_tir", None)
     context.user_data.pop("fight_mob_type", None)
-    
-    keyboard = [
-        [InlineKeyboardButton("Fight again", callback_data="menu_fight")],
-        [InlineKeyboardButton("Back to menu", callback_data="main_menu_after_fight")]
-    ]
-    await query.message.reply_text("What now?", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    await menu(query.message, context)
-
-async def main_menu_after_fight(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    await menu(query.message, context)
+    await menu(update, context)
 
