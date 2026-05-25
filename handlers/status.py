@@ -8,16 +8,5 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     data = load_player(user_id)
     stats = get_player_stats(data)
 
-    text = f"📊 **Статус персонажа**\n\n"
-    text += f"🔹 Корневой узел: тир {data['ku']}\n"
-    text += f"🔹 Тело: тир {data['telo']}\n"
-    text += f"🔹 Мощь: тир {data['mosch']}\n"
-    text += f"⚔️ Урон: {stats['damage']}\n"
-    text += f"❤️ Здоровье: {stats['hp_max']}\n\n"
-    text += f"💎 **Частицы:**\n"
-    text += f"  🟤 Песок: {data['chastitsy']['1']}\n"
-    text += f"  🟠 Глина: {data['chastitsy']['2']}\n"
-    text += f"  ⚪ Камень: {data['chastitsy']['3']}\n"
-    text += f"  🟡 Медь: {data['chastitsy']['4']}"
-
-    await update.message.reply_text(text, parse_mode="Markdown")
+    text = f"Character stats:\n\nCore node: tier {data['ku']}\nBody: tier {data['telo']}\nPower: tier {data['mosch']}\nDamage: {stats['damage']}\nHP: {stats['hp_max']}\n\nParticles:\nSand: {data['chastitsy']['1']}\nClay: {data['chastitsy']['2']}\nStone: {data['chastitsy']['3']}\nCopper: {data['chastitsy']['4']}"
+    await update.message.reply_text(text)

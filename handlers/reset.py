@@ -10,4 +10,4 @@ async def reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
     c.execute("DELETE FROM players WHERE user_id = ?", (user_id,))
     conn.commit()
     conn.close()
-    await update.message.reply_text("🔄 Прогресс сброшен! Используйте /start для начала.")
+    await update.message.reply_text("Progress reset! Use /start to begin.")
