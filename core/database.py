@@ -1,4 +1,4 @@
-﻿import json
+import json
 import sqlite3
 import os
 
@@ -41,7 +41,7 @@ def load_player(user_id: int) -> dict:
             "zhizn": 1,
             "chuvstva": 1,
             "energiya": 1,
-            "chastitsy": {"1": 0, "2": 0, "3": 0, "4": 0},
+            "chastitsy": {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0},
             "dary": {"1": 1, "2": 0, "3": 0, "4": 0},
             "rules": [{"action": "attack", "condition": "always", "priority": 1}]
         }
@@ -53,3 +53,4 @@ def save_player(user_id: int, data: dict):
               (user_id, json.dumps(data)))
     conn.commit()
     conn.close()
+
