@@ -1,4 +1,4 @@
-﻿from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.formulas import get_player_stats
@@ -156,3 +156,4 @@ async def exchange_particles(query, context):
         await query.message.reply_text("Not enough particles (need 20 of one tier)")
     save_player(user_id, data)
     await show_particles(query, context)
+
