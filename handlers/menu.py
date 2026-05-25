@@ -8,7 +8,6 @@ async def menu(message, context):
         [InlineKeyboardButton("Fight", callback_data="menu_fight")],
         [InlineKeyboardButton("Character", callback_data="menu_character")],
         [InlineKeyboardButton("Particles", callback_data="menu_particles")],
-        [InlineKeyboardButton("Gifts", callback_data="menu_gifts")],
         [InlineKeyboardButton("Help", callback_data="menu_help")],
     ]
     await message.reply_text("Main menu:", reply_markup=InlineKeyboardMarkup(keyboard))
@@ -25,9 +24,6 @@ async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await show_character(query, context)
     elif data == "menu_particles":
         await show_particles(query, context)
-    elif data == "menu_gifts":
-        from handlers.dary import dary_command
-        await dary_command(update, context)
     elif data == "menu_help":
         await show_help(query)
     elif data == "menu_back":
@@ -42,7 +38,6 @@ async def show_main_menu(query):
         [InlineKeyboardButton("Fight", callback_data="menu_fight")],
         [InlineKeyboardButton("Character", callback_data="menu_character")],
         [InlineKeyboardButton("Particles", callback_data="menu_particles")],
-        [InlineKeyboardButton("Gifts", callback_data="menu_gifts")],
         [InlineKeyboardButton("Help", callback_data="menu_help")],
     ]
     await query.edit_message_text("Main menu:", reply_markup=InlineKeyboardMarkup(keyboard))
@@ -51,6 +46,7 @@ async def show_character(query, context):
     user_id = query.from_user.id
     data = load_player(user_id)
     stats = get_player_stats(data)
+    dary = data.get("dary", {"1": 1, "2": 0, "3": 0, "4": 0})
 
     text = f"Character\n\n"
     text += f"Core node: tier {data['ku']}\n\n"
@@ -62,13 +58,16 @@ async def show_character(query, context):
     text += f"Mind: {data['um']} | Eyes: {data['glaza']} | Will: {data['volya']}\n"
     text += f"=== Tier 2 (Spirit) ===\n"
     text += f"Life: {data['zhizn']} | Senses: {data['chuvstva']} | Energy: {data['energiya']}\n\n"
-    text += f"Damage: {stats['damage']} | HP: {stats['hp_max']} | Dodge: {int(stats['dodge']*100)}%"
+    text += f"Damage: {stats['damage']} | HP: {stats['hp_max']} | Dodge: {int(stats['dodge']*100)}%\n\n"
+    text += f"=== Gifts (drop bonus) ===\n"
+    text += f"Tier1: {dary['1']} | Tier2: {dary['2']} | Tier3: {dary['3']} | Tier4: {dary['4']}"
 
     keyboard = [
         [InlineKeyboardButton("Upgrade KU", callback_data="upgrade_ku")],
         [InlineKeyboardButton("Upgrade Body", callback_data="upgrade_telo")],
         [InlineKeyboardButton("Upgrade Head", callback_data="upgrade_golova")],
         [InlineKeyboardButton("Upgrade Spirit", callback_data="upgrade_duh")],
+        [InlineKeyboardButton("Upgrade Gifts", callback_data="menu_gifts")],
         [InlineKeyboardButton("Back", callback_data="menu_back")],
     ]
     await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
