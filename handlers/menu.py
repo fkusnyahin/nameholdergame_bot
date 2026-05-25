@@ -8,6 +8,7 @@ async def menu(message, context):
         [InlineKeyboardButton("Fight", callback_data="menu_fight")],
         [InlineKeyboardButton("Character", callback_data="menu_character")],
         [InlineKeyboardButton("Particles", callback_data="menu_particles")],
+        [InlineKeyboardButton("Gifts", callback_data="menu_gifts")],
         [InlineKeyboardButton("Help", callback_data="menu_help")],
     ]
     await message.reply_text("Main menu:", reply_markup=InlineKeyboardMarkup(keyboard))
@@ -24,6 +25,9 @@ async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await show_character(query, context)
     elif data == "menu_particles":
         await show_particles(query, context)
+    elif data == "menu_gifts":
+        from handlers.dary import dary_command
+        await dary_command(update, context)
     elif data == "menu_help":
         await show_help(query)
     elif data == "menu_back":
@@ -38,6 +42,7 @@ async def show_main_menu(query):
         [InlineKeyboardButton("Fight", callback_data="menu_fight")],
         [InlineKeyboardButton("Character", callback_data="menu_character")],
         [InlineKeyboardButton("Particles", callback_data="menu_particles")],
+        [InlineKeyboardButton("Gifts", callback_data="menu_gifts")],
         [InlineKeyboardButton("Help", callback_data="menu_help")],
     ]
     await query.edit_message_text("Main menu:", reply_markup=InlineKeyboardMarkup(keyboard))
@@ -79,7 +84,7 @@ async def show_particles(query, context):
     await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def show_help(query):
-    text = "Commands:\n/status - character stats\n/upgrade_ku - upgrade core node\n/upgrade_telo - upgrade body\n/upgrade_golova - upgrade head\n/upgrade_duh - upgrade spirit\n/reset - reset progress\n/menu - open menu"
+    text = "Commands:\n/status - character stats\n/upgrade_ku - upgrade core node\n/upgrade_telo - upgrade body\n/upgrade_golova - upgrade head\n/upgrade_duh - upgrade spirit\n/dary - manage Gifts\n/reset - reset progress\n/menu - open menu"
     keyboard = [[InlineKeyboardButton("Back", callback_data="menu_back")]]
     await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
 
