@@ -16,7 +16,8 @@ async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     data = query.data
-
+    print(f"DEBUG: menu_callback called with data={data}")
+    
     if data == "menu_fight":
         from handlers.fight import fight_command
         await fight_command(update, context)
