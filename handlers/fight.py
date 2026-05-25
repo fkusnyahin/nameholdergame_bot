@@ -1,7 +1,7 @@
-﻿from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
-from core.fight import fight
+from core.fight import fight`nfrom handlers.menu import menu
 
 async def fight_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
@@ -71,3 +71,4 @@ async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     await menu(update, context)
+
