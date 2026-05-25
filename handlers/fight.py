@@ -76,7 +76,7 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.pop("fight_mob_type", None)
     
     keyboard = [
-        [InlineKeyboardButton("Fight again", callback_data="menu_fight")],
+        [InlineKeyboardButton("Fight again", callback_data="main_menu_fight")],
         [InlineKeyboardButton("Back to menu", callback_data="main_menu_back")]
     ]
     await query.message.reply_text("What now?", reply_markup=InlineKeyboardMarkup(keyboard))
@@ -85,4 +85,5 @@ async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     await main_menu(query.message, context)
+
 
