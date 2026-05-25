@@ -17,6 +17,8 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await query.answer()
     data = query.data
     
+    await query.message.reply_text(f"DEBUG: received data = {data}")
+    
     if data == "main_menu_fight":
         from handlers.fight import fight_command
         await fight_command(query.message, context)
@@ -27,10 +29,10 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
     elif data == "main_menu_help":
         await show_help(query)
     elif data == "main_menu_gifts":
-        await query.message.reply_text("DEBUG: dary_command called")
         from handlers.dary import dary_command
         await dary_command(query.message, context)
     elif data.startswith("dary_upgrade_"):
+        await query.message.reply_text(f"DEBUG: processing dary_upgrade_ for tier {data.split('_')[2]}")
         from handlers.dary import dary_upgrade_menu
         await dary_upgrade_menu(update, context)
     elif data.startswith("dary_do_upgrade_"):
