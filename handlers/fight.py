@@ -1,4 +1,4 @@
-п»їfrom telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.fight import fight
@@ -6,14 +6,14 @@ from core.fight import fight
 async def fight_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [
-            InlineKeyboardButton("РўРёСЂ 1 (РџРµСЃРѕРє)", callback_data="tier_1"),
-            InlineKeyboardButton("РўРёСЂ 2 (Р“Р»РёРЅР°)", callback_data="tier_2"),
-            InlineKeyboardButton("РўРёСЂ 3 (РљР°РјРµРЅСЊ)", callback_data="tier_3"),
-            InlineKeyboardButton("РўРёСЂ 4 (РњРµРґСЊ)", callback_data="tier_4"),
+            InlineKeyboardButton("Тир 1 (Песок)", callback_data="tier_1"),
+            InlineKeyboardButton("Тир 2 (Глина)", callback_data="tier_2"),
+            InlineKeyboardButton("Тир 3 (Камень)", callback_data="tier_3"),
+            InlineKeyboardButton("Тир 4 (Медь)", callback_data="tier_4"),
         ],
-        [InlineKeyboardButton("в¬…пёЏ РќР°Р·Р°Рґ РІ РјРµРЅСЋ", callback_data="main_menu_back")]
+        [InlineKeyboardButton("?? Назад в меню", callback_data="main_menu_back")]
     ]
-    await update.message.reply_text("Р’С‹Р±РµСЂРё С‚РёСЂ РјРѕР±Р°:", reply_markup=InlineKeyboardMarkup(keyboard))
+    await update.message.reply_text("Выбери тир моба:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def tier_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -22,18 +22,18 @@ async def tier_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tir = int(query.data.split("_")[1])
     context.user_data["fight_tir"] = tir
     
-    tier_names = {1: "РџРµСЃРѕРє", 2: "Р“Р»РёРЅР°", 3: "РљР°РјРµРЅСЊ", 4: "РњРµРґСЊ"}
+    tier_names = {1: "Песок", 2: "Глина", 3: "Камень", 4: "Медь"}
     tier_name = tier_names.get(tir, str(tir))
     
     keyboard = [
         [
-            InlineKeyboardButton("рџ—ЎпёЏ РўР°РЅРє", callback_data=f"select_tank_{tir}"),
-            InlineKeyboardButton("рџЏѓ РЎР»Р°Р±С‹Р№", callback_data=f"select_slaby_{tir}"),
-            InlineKeyboardButton("рџ”Ґ РњР°Рі", callback_data=f"select_mag_{tir}"),
+            InlineKeyboardButton("??? Танк", callback_data=f"select_tank_{tir}"),
+            InlineKeyboardButton("?? Слабый", callback_data=f"select_slaby_{tir}"),
+            InlineKeyboardButton("?? Маг", callback_data=f"select_mag_{tir}"),
         ],
-        [InlineKeyboardButton("в¬…пёЏ РќР°Р·Р°Рґ Рє С‚РёСЂР°Рј", callback_data="back_to_tiers")]
+        [InlineKeyboardButton("?? Назад к тирам", callback_data="back_to_tiers")]
     ]
-    await query.edit_message_text(f"РўРёСЂ {tir} ({tier_name}) РІС‹Р±СЂР°РЅ. РўРµРїРµСЂСЊ РІС‹Р±РµСЂРё С‚РёРї РјРѕР±Р°:", reply_markup=InlineKeyboardMarkup(keyboard))
+    await query.edit_message_text(f"Тир {tir} ({tier_name}) выбран. Теперь выбери тип моба:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def type_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -45,17 +45,17 @@ async def type_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     context.user_data["fight_mob_type"] = mob_type
     
-    tier_names = {1: "РџРµСЃРѕРє", 2: "Р“Р»РёРЅР°", 3: "РљР°РјРµРЅСЊ", 4: "РњРµРґСЊ"}
+    tier_names = {1: "Песок", 2: "Глина", 3: "Камень", 4: "Медь"}
     tier_name = tier_names.get(tir, str(tir))
     
-    mob_names = {"tank": "РўР°РЅРє", "slaby": "РЎР»Р°Р±С‹Р№", "mag": "РњР°Рі"}
+    mob_names = {"tank": "Танк", "slaby": "Слабый", "mag": "Маг"}
     mob_name = mob_names.get(mob_type, mob_type)
     
     keyboard = [
-        [InlineKeyboardButton("вњ… РќР°С‡Р°С‚СЊ Р±РѕР№", callback_data=f"fight_start_{tir}_{mob_type}")],
-        [InlineKeyboardButton("в¬…пёЏ РќР°Р·Р°Рґ Рє С‚РёРїР°Рј", callback_data=f"back_to_types_{tir}")]
+        [InlineKeyboardButton("? Начать бой", callback_data=f"fight_start_{tir}_{mob_type}")],
+        [InlineKeyboardButton("?? Назад к типам", callback_data=f"back_to_types_{tir}")]
     ]
-    await query.edit_message_text(f"вљ”пёЏ **РџСЂРѕС‚РёРІРЅРёРє: {tier_name} {mob_name}**\n\nРќР°Р¶РјРё В«РќР°С‡Р°С‚СЊ Р±РѕР№В» РґР»СЏ СЃСЂР°Р¶РµРЅРёСЏ.", parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(keyboard))
+    await query.edit_message_text(f"?? **Противник: {tier_name} {mob_name}**\n\nНажми «Начать бой» для сражения.", parse_mode="Markdown", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -68,19 +68,19 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     player_data = load_player(user_id)
     
-    await query.edit_message_text(f"вљ”пёЏ Р‘РѕР№ СЃ {mob_type} С‚РёСЂ {tir} РЅР°С‡Р°Р»СЃСЏ...")
+    await query.edit_message_text(f"?? Бой с {mob_type} тир {tir} начался...")
     
     victory, log_text, drop = fight(player_data, tir, mob_type)
     
     if victory:
         player_data["chastitsy"][str(tir)] += drop
         save_player(user_id, player_data)
-        await query.message.reply_text(f"вњ… РџРћР‘Р•Р”Рђ!\n\n{log_text}\n\nрџЋЃ Р”СЂРѕРї: +{drop} С‡Р°СЃС‚РёС†")
+        await query.message.reply_text(f"? ПОБЕДА!\n\n{log_text}\n\n?? Дроп: +{drop} частиц")
     else:
         for key in player_data["chastitsy"]:
             player_data["chastitsy"][key] //= 2
         save_player(user_id, player_data)
-        await query.message.reply_text(f"рџ’Ђ РџРћР РђР–Р•РќРР•!\n\n{log_text}\n\nрџµ РџРѕС‚РµСЂСЏРЅРѕ 50% С‡Р°СЃС‚РёС†")
+        await query.message.reply_text(f"?? ПОРАЖЕНИЕ!\n\n{log_text}\n\n?? Потеряно 50% частиц")
     
     context.user_data.pop("fight_tir", None)
     context.user_data.pop("fight_mob_type", None)
@@ -104,3 +104,9 @@ async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     from handlers.menu import menu
     await menu(update, context)
 
+
+
+async def back_to_tiers(update, context):
+    query = update.callback_query
+    await query.answer()
+    await fight_command(update, context)
