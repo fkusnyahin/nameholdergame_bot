@@ -1,26 +1,26 @@
-п»їfrom telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.formulas import get_player_stats
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Р“Р»Р°РІРЅРѕРµ РјРµРЅСЋ"""
+    """Главное меню"""
     keyboard = [
         [
-            InlineKeyboardButton("рџЋ® Р‘РѕР№", callback_data="menu_fight"),
-            InlineKeyboardButton("рџ‘¤ РџРµСЂСЃРѕРЅР°Р¶", callback_data="menu_character"),
+            InlineKeyboardButton("?? Бой", callback_data="menu_fight"),
+            InlineKeyboardButton("?? Персонаж", callback_data="menu_character"),
         ],
         [
-            InlineKeyboardButton("рџ’Ћ Р§Р°СЃС‚РёС†С‹", callback_data="menu_particles"),
-            InlineKeyboardButton("вќ“ РџРѕРјРѕС‰СЊ", callback_data="menu_help"),
+            InlineKeyboardButton("?? Частицы", callback_data="menu_particles"),
+            InlineKeyboardButton("? Помощь", callback_data="menu_help"),
         ],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    text = "рџЏ  **Р“Р»Р°РІРЅРѕРµ РјРµРЅСЋ**\n\nР’С‹Р±РµСЂРё РґРµР№СЃС‚РІРёРµ:"
-    await update.message.reply_text(text, reply_markup=reply_markup, parse_mode="Markdown")
+    text = "?? Главное меню\n\nВыбери действие:"
+    await update.message.reply_text(text, reply_markup=reply_markup, )
 
 async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """РћР±СЂР°Р±РѕС‚С‡РёРє РєРЅРѕРїРѕРє РјРµРЅСЋ"""
+    """Обработчик кнопок меню"""
     query = update.callback_query
     await query.answer()
     data = query.data
@@ -28,14 +28,14 @@ async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if data == "menu_fight":
         keyboard = [
             [
-                InlineKeyboardButton("РўРёСЂ 1 (РџРµСЃРѕРє)", callback_data="tier_1"),
-                InlineKeyboardButton("РўРёСЂ 2 (Р“Р»РёРЅР°)", callback_data="tier_2"),
-                InlineKeyboardButton("РўРёСЂ 3 (РљР°РјРµРЅСЊ)", callback_data="tier_3"),
-                InlineKeyboardButton("РўРёСЂ 4 (РњРµРґСЊ)", callback_data="tier_4"),
+                InlineKeyboardButton("Тир 1 (Песок)", callback_data="tier_1"),
+                InlineKeyboardButton("Тир 2 (Глина)", callback_data="tier_2"),
+                InlineKeyboardButton("Тир 3 (Камень)", callback_data="tier_3"),
+                InlineKeyboardButton("Тир 4 (Медь)", callback_data="tier_4"),
             ],
-            [InlineKeyboardButton("в¬…пёЏ РќР°Р·Р°Рґ РІ РјРµРЅСЋ", callback_data="menu_back")]
+            [InlineKeyboardButton("?? Назад в меню", callback_data="menu_back")]
         ]
-        await query.edit_message_text("Р’С‹Р±РµСЂРё С‚РёСЂ РјРѕР±Р°:", reply_markup=InlineKeyboardMarkup(keyboard))
+        await query.edit_message_text("Выбери тир моба:", reply_markup=InlineKeyboardMarkup(keyboard))
     elif data == "menu_character":
         await show_character(query, context)
     elif data == "menu_particles":
@@ -50,21 +50,21 @@ async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await exchange_particles(query, context)
 
 async def show_main_menu(query):
-    """РџРѕРєР°Р·Р°С‚СЊ РіР»Р°РІРЅРѕРµ РјРµРЅСЋ"""
+    """Показать главное меню"""
     keyboard = [
         [
-            InlineKeyboardButton("рџЋ® Р‘РѕР№", callback_data="menu_fight"),
-            InlineKeyboardButton("рџ‘¤ РџРµСЂСЃРѕРЅР°Р¶", callback_data="menu_character"),
+            InlineKeyboardButton("?? Бой", callback_data="menu_fight"),
+            InlineKeyboardButton("?? Персонаж", callback_data="menu_character"),
         ],
         [
-            InlineKeyboardButton("рџ’Ћ Р§Р°СЃС‚РёС†С‹", callback_data="menu_particles"),
-            InlineKeyboardButton("вќ“ РџРѕРјРѕС‰СЊ", callback_data="menu_help"),
+            InlineKeyboardButton("?? Частицы", callback_data="menu_particles"),
+            InlineKeyboardButton("? Помощь", callback_data="menu_help"),
         ],
     ]
     await query.edit_message_text(
-        "рџЏ  **Р“Р»Р°РІРЅРѕРµ РјРµРЅСЋ**\n\nР’С‹Р±РµСЂРё РґРµР№СЃС‚РІРёРµ:",
+        "?? Главное меню\n\nВыбери действие:",
         reply_markup=InlineKeyboardMarkup(keyboard),
-        parse_mode="Markdown"
+        
     )
 
 async def show_character(query, context):
@@ -72,53 +72,53 @@ async def show_character(query, context):
     data = load_player(user_id)
     stats = get_player_stats(data)
 
-    text = f"рџ‘¤ **РџРµСЂСЃРѕРЅР°Р¶**\n\n"
-    text += f"рџ”№ РљРѕСЂРЅРµРІРѕР№ СѓР·РµР»: С‚РёСЂ {data['ku']}\n"
-    text += f"рџ”№ РўРµР»Рѕ: С‚РёСЂ {data['telo']}\n"
-    text += f"рџ”№ РњРѕС‰СЊ: С‚РёСЂ {data['mosch']}\n"
-    text += f"вљ”пёЏ РЈСЂРѕРЅ: {stats['damage']}\n"
-    text += f"вќ¤пёЏ Р—РґРѕСЂРѕРІСЊРµ: {stats['hp_max']}\n"
+    text = f"?? Персонаж\n\n"
+    text += f"?? Корневой узел: тир {data['ku']}\n"
+    text += f"?? Тело: тир {data['telo']}\n"
+    text += f"?? Мощь: тир {data['mosch']}\n"
+    text += f"?? Урон: {stats['damage']}\n"
+    text += f"?? Здоровье: {stats['hp_max']}\n"
 
     keyboard = [
         [
-            InlineKeyboardButton("в¬†пёЏ РљРЈ", callback_data="upgrade_ku"),
-            InlineKeyboardButton("в¬†пёЏ РўРµР»Рѕ", callback_data="upgrade_telo"),
-            InlineKeyboardButton("в¬†пёЏ РњРѕС‰СЊ", callback_data="upgrade_mosch"),
+            InlineKeyboardButton("?? КУ", callback_data="upgrade_ku"),
+            InlineKeyboardButton("?? Тело", callback_data="upgrade_telo"),
+            InlineKeyboardButton("?? Мощь", callback_data="upgrade_mosch"),
         ],
-        [InlineKeyboardButton("рџ’Ћ Р§Р°СЃС‚РёС†С‹", callback_data="menu_particles")],
-        [InlineKeyboardButton("в¬…пёЏ РќР°Р·Р°Рґ", callback_data="menu_back")],
+        [InlineKeyboardButton("?? Частицы", callback_data="menu_particles")],
+        [InlineKeyboardButton("?? Назад", callback_data="menu_back")],
     ]
-    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="Markdown")
+    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard), )
 
 async def show_particles(query, context):
     user_id = query.from_user.id
     data = load_player(user_id)
 
-    text = f"рџ’Ћ **Р’Р°С€Рё С‡Р°СЃС‚РёС†С‹**\n\n"
-    text += f"рџџ¤ РџРµСЃРѕРє: {data['chastitsy']['1']}\n"
-    text += f"рџџ  Р“Р»РёРЅР°: {data['chastitsy']['2']}\n"
-    text += f"вљЄ РљР°РјРµРЅСЊ: {data['chastitsy']['3']}\n"
-    text += f"рџџЎ РњРµРґСЊ: {data['chastitsy']['4']}\n"
+    text = f"?? Ваши частицы\n\n"
+    text += f"?? Песок: {data['chastitsy']['1']}\n"
+    text += f"?? Глина: {data['chastitsy']['2']}\n"
+    text += f"? Камень: {data['chastitsy']['3']}\n"
+    text += f"?? Медь: {data['chastitsy']['4']}\n"
 
     keyboard = [
-        [InlineKeyboardButton("рџ”„ РћР±РјРµРЅ 20:1", callback_data="exchange_20_1")],
-        [InlineKeyboardButton("в¬…пёЏ РќР°Р·Р°Рґ", callback_data="menu_back")],
+        [InlineKeyboardButton("?? Обмен 20:1", callback_data="exchange_20_1")],
+        [InlineKeyboardButton("?? Назад", callback_data="menu_back")],
     ]
-    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="Markdown")
+    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard), )
 
 async def show_help(query):
-    text = "вќ“ **РџРѕРјРѕС‰СЊ**\n\n"
-    text += "рџ“‹ РљРѕРјР°РЅРґС‹:\n"
-    text += "/status вЂ” СЃС‚Р°С‚СѓСЃ РїРµСЂСЃРѕРЅР°Р¶Р°\n"
-    text += "/fight вЂ” РЅР°С‡Р°С‚СЊ Р±РѕР№\n"
-    text += "/upgrade_ku вЂ” РїРѕРІС‹СЃРёС‚СЊ РљРЈ\n"
-    text += "/upgrade_telo вЂ” РїРѕРІС‹СЃРёС‚СЊ РўРµР»Рѕ\n"
-    text += "/upgrade_mosch вЂ” РїРѕРІС‹СЃРёС‚СЊ РњРѕС‰СЊ\n"
-    text += "/reset вЂ” СЃР±СЂРѕСЃРёС‚СЊ РїСЂРѕРіСЂРµСЃСЃ\n"
-    text += "/menu вЂ” РѕС‚РєСЂС‹С‚СЊ РјРµРЅСЋ\n"
+    text = "? Помощь\n\n"
+    text += "?? Команды:\n"
+    text += "/status — статус персонажа\n"
+    text += "/fight — начать бой\n"
+    text += "/upgrade_ku — повысить КУ\n"
+    text += "/upgrade_telo — повысить Тело\n"
+    text += "/upgrade_mosch — повысить Мощь\n"
+    text += "/reset — сбросить прогресс\n"
+    text += "/menu — открыть меню\n"
 
-    keyboard = [[InlineKeyboardButton("в¬…пёЏ РќР°Р·Р°Рґ", callback_data="menu_back")]]
-    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode="Markdown")
+    keyboard = [[InlineKeyboardButton("?? Назад", callback_data="menu_back")]]
+    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard), )
 
 async def handle_upgrade(query, context):
     user_id = query.from_user.id
@@ -156,11 +156,11 @@ async def exchange_particles(query, context):
             data["chastitsy"][str(tier)] -= exchange_count * 20
             data["chastitsy"][str(tier + 1)] += exchange_count
             exchanged = True
-            await query.message.reply_text(f"рџ”„ РћР±РјРµРЅСЏРЅРѕ {exchange_count * 20} С‡Р°СЃС‚РёС† С‚РёСЂР° {tier} в†’ {exchange_count} С‡Р°СЃС‚РёС† С‚РёСЂР° {tier + 1}")
+            await query.message.reply_text(f"?? Обменяно {exchange_count * 20} частиц тира {tier} > {exchange_count} частиц тира {tier + 1}")
             break
 
     if not exchanged:
-        await query.message.reply_text("вќЊ РќРµС‚ 20 С‡Р°СЃС‚РёС† РѕРґРЅРѕРіРѕ С‚РёСЂР° РґР»СЏ РѕР±РјРµРЅР°")
+        await query.message.reply_text("? Нет 20 частиц одного тира для обмена")
 
     save_player(user_id, data)
     await show_particles(query, context)
