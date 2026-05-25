@@ -97,7 +97,6 @@ async def dary_do_upgrade(update: Update, context: ContextTypes.DEFAULT_TYPE):
         data["dary"][str(tier)] = current_level + 1
         save_player(user_id, data)
         await query.message.reply_text(f"✅ Tier {tier} Gifts upgraded to level {current_level + 1}!")
-        # Показать обновлённое меню Даров
         await dary_command(query.message, context)
     else:
         await query.message.reply_text(f"❌ Need {cost} particles of tier {cost_tier}")
