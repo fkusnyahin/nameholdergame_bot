@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -14,6 +14,7 @@ from handlers.upgrade import (
     upgrade_lovkost, upgrade_krov, upgrade_um, upgrade_glaza, upgrade_volya,
     upgrade_zhizn, upgrade_chuvstva, upgrade_energiya
 )
+from handlers.dary import dary_command, upgrade_dary_1, upgrade_dary_2, upgrade_dary_3, upgrade_dary_4
 from handlers.test import add_pesok, add_glina, add_kamen, add_med
 from handlers.reset import reset
 from handlers.menu import menu, menu_callback
@@ -25,6 +26,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("menu", menu))
     app.add_handler(CommandHandler("status", status))
+    app.add_handler(CommandHandler("dary", dary_command))
 
     app.add_handler(CommandHandler("upgrade_ku", upgrade_ku))
     app.add_handler(CommandHandler("upgrade_telo", upgrade_telo))
@@ -39,6 +41,11 @@ def main():
     app.add_handler(CommandHandler("upgrade_zhizn", upgrade_zhizn))
     app.add_handler(CommandHandler("upgrade_chuvstva", upgrade_chuvstva))
     app.add_handler(CommandHandler("upgrade_energiya", upgrade_energiya))
+
+    app.add_handler(CommandHandler("upgrade_dary_1", upgrade_dary_1))
+    app.add_handler(CommandHandler("upgrade_dary_2", upgrade_dary_2))
+    app.add_handler(CommandHandler("upgrade_dary_3", upgrade_dary_3))
+    app.add_handler(CommandHandler("upgrade_dary_4", upgrade_dary_4))
 
     app.add_handler(CommandHandler("add_pesok", add_pesok))
     app.add_handler(CommandHandler("add_glina", add_glina))
