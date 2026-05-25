@@ -38,6 +38,7 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text += f"Sand: {data['chastitsy']['1']}\n"
     text += f"Clay: {data['chastitsy']['2']}\n"
     text += f"Stone: {data['chastitsy']['3']}\n"
-    text += f"Copper: {data['chastitsy']['4']}\nBronze: {data["chastitsy"]["5"]}\nSteel: {data["chastitsy"]["6"]}\nTitan: {data["chastitsy"]["7"]}\nWolfram: {data["chastitsy"]["8"]}\nStar: {data["chastitsy"]["9"]}"
+    text += f"Copper: {data['chastitsy']['4']}\nBronze: {data['chastitsy']['5']}\nSteel: {data['chastitsy']['6']}\nTitan: {data['chastitsy']['7']}\nWolfram: {data['chastitsy']['8']}\nStar: {data['chastitsy']['9']}"
 
     await update.message.reply_text(text)
+
