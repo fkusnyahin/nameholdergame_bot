@@ -1,4 +1,4 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+﻿from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.formulas import get_player_stats
@@ -26,7 +26,10 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await show_particles(query, context)
     elif data == "main_menu_help":
         await show_help(query)
-        elif data == "main_menu_gifts":\n        from handlers.dary import dary_command\n        await dary_command(update, context)\n    elif data == "main_menu_back":
+    elif data == "main_menu_gifts":
+        from handlers.dary import dary_command
+        await dary_command(update, context)
+    elif data == "main_menu_back":
         await show_main_menu(query)
     elif data.startswith("upgrade_"):
         await handle_upgrade(query, context)
@@ -147,4 +150,3 @@ async def exchange_particles(query, context):
         await query.message.reply_text("Not enough particles (need 20 of one tier)")
     save_player(user_id, data)
     await show_particles(query, context)
-
