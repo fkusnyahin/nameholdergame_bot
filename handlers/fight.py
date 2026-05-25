@@ -1,4 +1,4 @@
-import random
+﻿import random
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
@@ -13,6 +13,13 @@ async def fight_command(message, context):
             InlineKeyboardButton("Tier 3 (Stone)", callback_data="tier_3"),
             InlineKeyboardButton("Tier 4 (Copper)", callback_data="tier_4"),
         ],
+        [
+            InlineKeyboardButton("Tier 5 (Bronze)", callback_data="tier_5"),
+            InlineKeyboardButton("Tier 6 (Steel)", callback_data="tier_6"),
+            InlineKeyboardButton("Tier 7 (Titan)", callback_data="tier_7"),
+            InlineKeyboardButton("Tier 8 (Wolfram)", callback_data="tier_8"),
+        ],
+        [InlineKeyboardButton("Tier 9 (Star)", callback_data="tier_9")],
         [InlineKeyboardButton("Back to menu", callback_data="main_menu_back")]
     ]
     await message.reply_text("Choose mob tier:", reply_markup=InlineKeyboardMarkup(keyboard))
@@ -85,5 +92,3 @@ async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     await main_menu(query.message, context)
-
-
