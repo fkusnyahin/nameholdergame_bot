@@ -71,6 +71,7 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    await menu(update, context)
+    await menu(query.message, context)
+
 
 
