@@ -57,7 +57,7 @@ def main():
     app.add_handler(CallbackQueryHandler(type_selected, pattern="^select_"))
     app.add_handler(CallbackQueryHandler(fight_start, pattern="^fight_start_"))
     app.add_handler(CallbackQueryHandler(main_menu_back, pattern="^main_menu_back$"))
-    app.add_handler(CallbackQueryHandler(main_menu_after_fight, pattern="^main_menu_after_fight$"))
+    app.add_handler(CallbackQueryHandler(main_menu_back, pattern="^main_menu_back$"))
     app.add_handler(CallbackQueryHandler(menu_callback, pattern="^(menu_|upgrade_|exchange_)"))
 
     print("Bot started!")
@@ -65,4 +65,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

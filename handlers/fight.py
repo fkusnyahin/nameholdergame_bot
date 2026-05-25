@@ -1,8 +1,9 @@
+п»їimport random
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.fight import fight
-import random`nfrom handlers.menu import menu
+from handlers.menu import menu
 
 async def fight_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
@@ -55,14 +56,13 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     player_data = load_player(user_id)
     
-    # Бой
     await query.edit_message_text(f"Fight with {mob_type} tier {tir} started...")
     victory, log_text, _ = fight(player_data, tir, mob_type)
     
     if victory:
-        # Расчёт дропа с учётом Даров
         dary_level = player_data.get("dary", {}).get(str(tir), 1)
-        drop_amount = random.randint(1, {1:1,2:2,3:3,4:5,5:8,6:13,7:21,8:34,9:55,10:89}.get(dary_level, 1))
+        drop_max = {1:1, 2:2, 3:3, 4:5, 5:8, 6:13, 7:21, 8:34, 9:55, 10:89}.get(dary_level, 1)
+        drop_amount = random.randint(1, drop_max)
         player_data["chastitsy"][str(tir)] += drop_amount
         save_player(user_id, player_data)
         await query.message.reply_text(f"WIN!\n\n{log_text}\n\nDrop: +{drop_amount} particles")
@@ -75,7 +75,6 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.pop("fight_tir", None)
     context.user_data.pop("fight_mob_type", None)
     
-    # Показать меню после боя
     keyboard = [
         [InlineKeyboardButton("Fight again", callback_data="menu_fight")],
         [InlineKeyboardButton("Back to menu", callback_data="main_menu_back")]
@@ -86,4 +85,3 @@ async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     await menu(update, context)
-
