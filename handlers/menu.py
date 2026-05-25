@@ -1,41 +1,25 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+п»їfrom telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.formulas import get_player_stats
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Главное меню"""
     keyboard = [
-        [
-            InlineKeyboardButton("?? Бой", callback_data="menu_fight"),
-            InlineKeyboardButton("?? Персонаж", callback_data="menu_character"),
-        ],
-        [
-            InlineKeyboardButton("?? Частицы", callback_data="menu_particles"),
-            InlineKeyboardButton("? Помощь", callback_data="menu_help"),
-        ],
+        [InlineKeyboardButton("Fight", callback_data="menu_fight")],
+        [InlineKeyboardButton("Character", callback_data="menu_character")],
+        [InlineKeyboardButton("Particles", callback_data="menu_particles")],
+        [InlineKeyboardButton("Help", callback_data="menu_help")],
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    text = "?? Главное меню\n\nВыбери действие:"
-    await update.message.reply_text(text, reply_markup=reply_markup, )
+    await update.message.reply_text("Main menu:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Обработчик кнопок меню"""
     query = update.callback_query
     await query.answer()
     data = query.data
 
     if data == "menu_fight":
-        keyboard = [
-            [
-                InlineKeyboardButton("Тир 1 (Песок)", callback_data="tier_1"),
-                InlineKeyboardButton("Тир 2 (Глина)", callback_data="tier_2"),
-                InlineKeyboardButton("Тир 3 (Камень)", callback_data="tier_3"),
-                InlineKeyboardButton("Тир 4 (Медь)", callback_data="tier_4"),
-            ],
-            [InlineKeyboardButton("?? Назад в меню", callback_data="menu_back")]
-        ]
-        await query.edit_message_text("Выбери тир моба:", reply_markup=InlineKeyboardMarkup(keyboard))
+        from handlers.fight import fight_command
+        await fight_command(update, context)
     elif data == "menu_character":
         await show_character(query, context)
     elif data == "menu_particles":
@@ -50,104 +34,64 @@ async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await exchange_particles(query, context)
 
 async def show_main_menu(query):
-    """Показать главное меню"""
     keyboard = [
-        [
-            InlineKeyboardButton("?? Бой", callback_data="menu_fight"),
-            InlineKeyboardButton("?? Персонаж", callback_data="menu_character"),
-        ],
-        [
-            InlineKeyboardButton("?? Частицы", callback_data="menu_particles"),
-            InlineKeyboardButton("? Помощь", callback_data="menu_help"),
-        ],
+        [InlineKeyboardButton("Fight", callback_data="menu_fight")],
+        [InlineKeyboardButton("Character", callback_data="menu_character")],
+        [InlineKeyboardButton("Particles", callback_data="menu_particles")],
+        [InlineKeyboardButton("Help", callback_data="menu_help")],
     ]
-    await query.edit_message_text(
-        "?? Главное меню\n\nВыбери действие:",
-        reply_markup=InlineKeyboardMarkup(keyboard),
-        
-    )
+    await query.edit_message_text("Main menu:", reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def show_character(query, context):
     user_id = query.from_user.id
     data = load_player(user_id)
     stats = get_player_stats(data)
 
-    text = f"?? Персонаж\n\n"
-    text += f"?? Корневой узел: тир {data['ku']}\n"
-    text += f"?? Тело: тир {data['telo']}\n"
-    text += f"?? Мощь: тир {data['mosch']}\n"
-    text += f"?? Урон: {stats['damage']}\n"
-    text += f"?? Здоровье: {stats['hp_max']}\n"
-
+    text = f"Character\n\nCore node: tier {data['ku']}\nBody: tier {data['telo']}\nPower: tier {data['mosch']}\nDamage: {stats['damage']}\nHP: {stats['hp_max']}"
     keyboard = [
-        [
-            InlineKeyboardButton("?? КУ", callback_data="upgrade_ku"),
-            InlineKeyboardButton("?? Тело", callback_data="upgrade_telo"),
-            InlineKeyboardButton("?? Мощь", callback_data="upgrade_mosch"),
-        ],
-        [InlineKeyboardButton("?? Частицы", callback_data="menu_particles")],
-        [InlineKeyboardButton("?? Назад", callback_data="menu_back")],
+        [InlineKeyboardButton("Upgrade KU", callback_data="upgrade_ku")],
+        [InlineKeyboardButton("Upgrade Body", callback_data="upgrade_telo")],
+        [InlineKeyboardButton("Upgrade Power", callback_data="upgrade_mosch")],
+        [InlineKeyboardButton("Back", callback_data="menu_back")],
     ]
-    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard), )
+    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def show_particles(query, context):
     user_id = query.from_user.id
     data = load_player(user_id)
-
-    text = f"?? Ваши частицы\n\n"
-    text += f"?? Песок: {data['chastitsy']['1']}\n"
-    text += f"?? Глина: {data['chastitsy']['2']}\n"
-    text += f"? Камень: {data['chastitsy']['3']}\n"
-    text += f"?? Медь: {data['chastitsy']['4']}\n"
-
+    text = f"Particles\nSand: {data['chastitsy']['1']}\nClay: {data['chastitsy']['2']}\nStone: {data['chastitsy']['3']}\nCopper: {data['chastitsy']['4']}"
     keyboard = [
-        [InlineKeyboardButton("?? Обмен 20:1", callback_data="exchange_20_1")],
-        [InlineKeyboardButton("?? Назад", callback_data="menu_back")],
+        [InlineKeyboardButton("Exchange 20:1", callback_data="exchange_20_1")],
+        [InlineKeyboardButton("Back", callback_data="menu_back")],
     ]
-    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard), )
+    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def show_help(query):
-    text = "? Помощь\n\n"
-    text += "?? Команды:\n"
-    text += "/status — статус персонажа\n"
-    text += "/fight — начать бой\n"
-    text += "/upgrade_ku — повысить КУ\n"
-    text += "/upgrade_telo — повысить Тело\n"
-    text += "/upgrade_mosch — повысить Мощь\n"
-    text += "/reset — сбросить прогресс\n"
-    text += "/menu — открыть меню\n"
-
-    keyboard = [[InlineKeyboardButton("?? Назад", callback_data="menu_back")]]
-    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard), )
+    text = "Commands:\n/status - character stats\n/upgrade_ku - upgrade core node\n/upgrade_telo - upgrade body\n/upgrade_mosch - upgrade power\n/reset - reset progress\n/menu - open menu"
+    keyboard = [[InlineKeyboardButton("Back", callback_data="menu_back")]]
+    await query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(keyboard))
 
 async def handle_upgrade(query, context):
     user_id = query.from_user.id
-    data = load_player(user_id)
     action = query.data.split("_")[1]
-
     from handlers.upgrade import upgrade_ku, upgrade_telo, upgrade_mosch
     from telegram import Update
-
     class FakeUpdate:
         def __init__(self, user_id, query):
             self.effective_user = type('obj', (object,), {'id': user_id})()
             self.message = type('obj', (object,), {'reply_text': query.message.reply_text})()
-
     fake = FakeUpdate(user_id, query)
-
     if action == "ku":
         await upgrade_ku(fake, context)
     elif action == "telo":
         await upgrade_telo(fake, context)
     elif action == "mosch":
         await upgrade_mosch(fake, context)
-
     await show_character(query, context)
 
 async def exchange_particles(query, context):
     user_id = query.from_user.id
     data = load_player(user_id)
-
     exchanged = False
     for tier in range(1, 4):
         amount = data["chastitsy"][str(tier)]
@@ -156,11 +100,9 @@ async def exchange_particles(query, context):
             data["chastitsy"][str(tier)] -= exchange_count * 20
             data["chastitsy"][str(tier + 1)] += exchange_count
             exchanged = True
-            await query.message.reply_text(f"?? Обменяно {exchange_count * 20} частиц тира {tier} > {exchange_count} частиц тира {tier + 1}")
+            await query.message.reply_text(f"Exchanged {exchange_count * 20} particles tier {tier} -> {exchange_count} particles tier {tier + 1}")
             break
-
     if not exchanged:
-        await query.message.reply_text("? Нет 20 частиц одного тира для обмена")
-
+        await query.message.reply_text("Not enough particles (need 20 of one tier)")
     save_player(user_id, data)
     await show_particles(query, context)
