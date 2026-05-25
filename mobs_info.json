@@ -1,0 +1,5 @@
+﻿{
+  "tank": {"name": "Stone Guardian", "description": "Slow but very durable"},
+  "slaby": {"name": "Forest Trickster", "description": "Fast but fragile"},
+  "mag": {"name": "Rotting Shaman", "description": "Curses and diseases"}
+}
