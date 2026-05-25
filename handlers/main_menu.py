@@ -1,4 +1,4 @@
-п»їfrom telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.formulas import get_player_stats
@@ -17,7 +17,7 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await query.answer()
     data = query.data
     
-    # РІСЂРµРјРµРЅРЅР°СЏ РѕС‚Р»Р°РґРєР°
+    # временная отладка
     await query.message.reply_text(f"DEBUG: data={data}")
     
     if data == "main_menu_fight":
@@ -29,7 +29,7 @@ async def main_menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE)
         await show_particles(query, context)
     elif data == "main_menu_help":
         await show_help(query)
-    elif data == "main_menu_gifts":
+    elif data == "main_menu_gifts":\n    print("DEBUG: calling dary_command")
         from handlers.dary import dary_command
         await dary_command(query.message, context)
     elif data.startswith("dary_upgrade_"):
@@ -159,3 +159,4 @@ async def exchange_particles(query, context):
         await query.message.reply_text("Not enough particles (need 20 of one tier)")
     save_player(user_id, data)
     await show_particles(query, context)
+
