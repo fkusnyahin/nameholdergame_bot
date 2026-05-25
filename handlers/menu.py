@@ -19,7 +19,7 @@ async def menu_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if data == "menu_fight":
         from handlers.fight import fight_command
-        await fight_command(query.message, context)
+        await fight_command(update, context, from_callback=True)
     elif data == "menu_character":
         await show_character(query, context)
     elif data == "menu_particles":
@@ -106,4 +106,5 @@ async def exchange_particles(query, context):
         await query.message.reply_text("Not enough particles (need 20 of one tier)")
     save_player(user_id, data)
     await show_particles(query, context)
+
 

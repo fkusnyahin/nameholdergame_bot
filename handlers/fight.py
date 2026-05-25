@@ -1,4 +1,4 @@
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+﻿from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.fight import fight
@@ -13,7 +13,12 @@ async def fight_command(update, context, from_callback=False):
         ],
         [InlineKeyboardButton("Back to menu", callback_data="main_menu_back")]
     ]
-    if hasattr(update, "message") and update.message else await update.edit_message_text("Choose mob tier:", reply_markup=InlineKeyboardMarkup(keyboard))
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    if from_callback and hasattr(update, 'callback_query'):
+        await update.callback_query.message.reply_text("Choose mob tier:", reply_markup=reply_markup)
+    else:
+        await update.message.reply_text("Choose mob tier:", reply_markup=reply_markup)
 
 async def tier_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -70,7 +75,7 @@ async def fight_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def back_to_tiers(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    await fight_command(update, context)
+    await fight_command(update, context, from_callback=True)
 
 async def back_to_types(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -85,4 +90,3 @@ async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     from handlers.menu import menu
     await menu(update, context)
-
