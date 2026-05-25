@@ -1,4 +1,4 @@
-﻿from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from core.database import load_player, save_player
 from core.fight import fight
@@ -89,4 +89,5 @@ async def main_menu_back(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     from handlers.menu import menu
-    await menu(update, context)
+    await menu(query.message, context)
+
